@@ -1,11 +1,9 @@
 * RainGL
   - Rain simulation using OpenGL & Cuda
-  - #+BEGIN_SRC shell
-	$ make
-	$ ./raingl
-	#+END_SRC
-
-* Dependencies
-  - #+BEGIN_SRC shell
-	sudo apt-get install freeglut3 freeglut3-dbg freeglut3-dev
-	#+END_SRC
+  - Compile
+    : $ make
+    : $ ./raingl
+  - Dependencies
+  	+ Installl freeglut package
+ 		: $ sudo apt-get install freeglut3 freeglut3-dbg freeglut3-dev
+  
