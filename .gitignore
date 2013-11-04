@@ -4,3 +4,5 @@
 !*.org
 !.gitignore
 !Makefile
+!*.jpg
+!*.bmp
