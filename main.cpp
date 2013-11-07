@@ -17,10 +17,34 @@ using namespace std;
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+class Drop
+{
+public:
+};
+
 // Load windowid for current window
 int windowid = 0;
-
+// Stores background texture id
 unsigned int bg = 0;
+int raininit = 1;
+
+// Get random number
+inline int getnos(int range)
+{
+	return ( rand() % range );
+}
+
+// Get random floating number
+inline float getnosf(int range)
+{
+	return (rand() % range + (rand() % 10 * 0.1));
+}
+
+// Get random value for color
+inline float getcolf()
+{
+	return (rand() % 11 * 0.1);
+}
 
 /*
  * Load texture image with specified name
@@ -61,7 +85,7 @@ static void init()
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 
-	bg =  loadTexture("assets/bg2.bmp");
+	bg =  loadTexture("assets/picture.bmp");
 }
 
 /*
@@ -69,10 +93,13 @@ static void init()
  */
 static void display()
 {
+	char projname[] = "RainGL";
+	char name[] = "r: rain q:quit";
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//	glColor4f(1, 0, 0, 0.5);
+
 	// Bind texture according to ortho parameters
+	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, bg);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0, 1.0);
@@ -84,6 +111,40 @@ static void display()
 	glTexCoord2f(1.0, 1.0);
 	glVertex3f(160, 0, 0.0);
 	glEnd();
+	glPopMatrix();
+
+
+	/* Show project title
+	 * Interface information
+	 */
+	glPushMatrix();
+	glColor4f(0, 0, 0, 0.5);
+	for(int i = 0; i < 14; i++)
+	{
+		if(i < 7)
+		{
+			if(raininit)
+			{
+				glRasterPos3f(4.5 + 0.1 * i, 5, 0);
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, projname[i]);
+				//glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, projname[i]);
+			}
+			else
+			{
+				glRasterPos3f(8 + 0.1 * i, 9.5, 0);
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, projname[i]);
+			}
+		}
+		glRasterPos3f(8+ 0.1 * i, 9, 0);
+		glutBitmapCharacter(GLUT_BITMAP_8_BY_13, name[i]);
+	}
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor4f(0, 0, 1, 0.8);
+	glTranslatef(50, 50, 1);
+	glutSolidSphere(5 , 100, 10 );
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -108,6 +169,8 @@ static void keyboard(unsigned char key, int x, int y)
 	 * @x   - x position on display
 	 * @y   - y position on display
 	 */
+	x = x + 1;
+	y = y + 1;
 	switch(key)
 	{
 	case 'q':

@@ -1,16 +1,61 @@
 # File name :- makefile
 # Licence:- GNU GPL v3
 # Project Name:- RainGL
+## Makefile
+##=============================================================================
 
-raingl : main.o
-	g++ -Wall -g -o raingl main.o -lglut -lGL -lGLU -lm -lSDL -lSDL_image
-	rm *.o 
+NAME	= raingl
 
-temp.o : main.cpp
-	g++ -Wall -g -c main.cpp
+DIRECTORY = RainGL
+
+CC	=	g++
+
+ECHO = @echo
+
+RM	= rm -f
+
+SRC	= main.cpp
+
+CFLAGS	= -Wall	\
+		-W		\
+		-Werror
+
+LFLAGS	=	-lglut	\
+			-lGL	\
+			-lGLU	\
+			-lm		\
+			-lSDL	\
+			-lSDL_image
+
+OBJ 	= $(SRC:.cpp=.o)
+
+all	:	$(NAME)
+
+$(NAME)	:	$(OBJ)
+	$(CC) $(OBJ) $(LFLAGS) -o $(NAME)
+
+.cpp.o :
+		$(CC) $(CFLAGS) $(IFLAGS) $< -c -o $@
 
 clean :
-	rm *.o *.h.gch raingl a.out
+		$(RM) $(OBJ)
+		$(RM) *~ \#*\#
 
-rmback :
-	rm *~
+distclean :	clean
+		$(RM) $(NAME)
+
+separator :
+		$(ECHO) "------------------------------------------"
+
+re :		clean separator all
+
+run :		all
+		./$(NAME)
+
+tarball :	clean separator
+		$(ECHO) "Archiving..."
+		cd .. && $(ARCHIVE) $(NAME).tar.gz $(DIRECTORY)
+		$(ECHO) "Done !"
+
+install :
+		$(ECHO) "Not implemented yet."
