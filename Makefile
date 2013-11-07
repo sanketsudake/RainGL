@@ -2,14 +2,15 @@
 # Licence:- GNU GPL v3
 # Project Name:- RainGL
 
-raingl : temp.o
-	g++ -Wall -g -o raingl temp.o -lglut -lGL -lGLU -lm -lSDL -lSDL_image
+raingl : main.o
+	g++ -Wall -g -o raingl main.o -lglut -lGL -lGLU -lm -lSDL -lSDL_image
+	rm *.o 
 
-temp.o : temp.cpp
-	g++ -Wall -g -c temp.cpp
+temp.o : main.cpp
+	g++ -Wall -g -c main.cpp
 
-clean : 
+clean :
 	rm *.o *.h.gch raingl a.out
 
-rmback : 
+rmback :
 	rm *~
