@@ -77,7 +77,7 @@ unsigned int loadTexture(const char* filename)
  */
 static void init()
 {
-	glClearColor(0, 0, 0, 0);
+	glClearColor(0, 0.5, 0.6, 0.5);
 	glMatrixMode(GL_PROJECTION);
 	glOrtho(0, 10, 0, 10, 0, 10);
 	glEnable(GL_DEPTH);
@@ -98,20 +98,6 @@ static void display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// Bind texture according to ortho parameters
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, bg);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 1.0);
-	glVertex3f(0, 0, 0.0);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0, 90, 0.0);
-	glTexCoord2f(1.0,  0.0);
-	glVertex3f(160, 90, 0.0);
-	glTexCoord2f(1.0, 1.0);
-	glVertex3f(160, 0, 0.0);
-	glEnd();
-	glPopMatrix();
 
 
 	/* Show project title
@@ -125,25 +111,53 @@ static void display()
 		{
 			if(raininit)
 			{
-				glRasterPos3f(4.5 + 0.1 * i, 5, 0);
+				glRasterPos3f(50 + 2 * i, 45, 0);
 				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, projname[i]);
 				//glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, projname[i]);
 			}
 			else
 			{
-				glRasterPos3f(8 + 0.1 * i, 9.5, 0);
+				glRasterPos3f(140 + 1.1 * i, 85, 0);
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, projname[i]);
 			}
 		}
-		glRasterPos3f(8+ 0.1 * i, 9, 0);
+		glRasterPos3f(140+ 1 * i, 80, 0);
 		glutBitmapCharacter(GLUT_BITMAP_8_BY_13, name[i]);
 	}
 	glPopMatrix();
 
 	glPushMatrix();
-	glColor4f(0, 0, 1, 0.8);
-	glTranslatef(50, 50, 1);
-	glutSolidSphere(5 , 100, 10 );
+	glColor4f(0, 0, 1, 0.5);
+	glTranslatef(50, 50, 0);
+	glRotatef(10, 0, 0, 1);
+	glutSolidCube(10);
+	glColor4f(0, 0, 0, 0.5);
+	glutWireCube(10);
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor4f(1, 1, 0, 0.5);
+	glTranslatef(55, 50, 0);
+	glRotatef(80, 0, 0, 1);
+	glutSolidCube(10);
+	glColor4f(0, 0, 0, 0.5);
+	glutWireCube(10);
+	glPopMatrix();
+
+	// Bind texture according to ortho parameters
+	glPushMatrix();
+	glColor4f(1, 1, 0, 0.5);
+	glBindTexture(GL_TEXTURE_2D, bg);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(0, 0, 0.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(0, 90, 0.0);
+	glTexCoord2f(1.0,  0.0);
+	glVertex3f(160, 90, 0.0);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(160, 0, 0.0);
+	glEnd();
 	glPopMatrix();
 
 	glutSwapBuffers();
@@ -158,8 +172,8 @@ static void reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 160, 0, 90, 0, 100);
-}
 
+}
 
 static void keyboard(unsigned char key, int x, int y)
 {
@@ -180,6 +194,8 @@ static void keyboard(unsigned char key, int x, int y)
 		break;
 	case 'r':
 	case 'R':
+
+		raininit = 0;
 		break;
 	}
 	glutPostRedisplay();
