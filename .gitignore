@@ -1,7 +1,3 @@
-*
-!*.cpp
-!*.h
-!*.org
-!.gitignore
-!Makefile
-!assets/*
+*.o
+raingl
+*.h.gch
