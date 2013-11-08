@@ -52,6 +52,13 @@ re :		clean separator all
 run :		all
 		./$(NAME)
 
+# This option use useful when nvidia graphics card
+# is enabled in ubuntu
+# Runs program on graphics card providing greater
+# fps rate.
+cudarun	:	all
+		primusrun ./$(NAME)
+
 tarball :	clean separator
 		$(ECHO) "Archiving..."
 		cd .. && $(ARCHIVE) $(NAME).tar.gz $(DIRECTORY)

@@ -17,11 +17,12 @@ using namespace std;
 #include <GL/glut.h>
 #define MAXX 160
 #define MAXY 90
-#define DROP_RADIUS 6
+#define DROP_RADIUS 4
+
 // Load windowid for current window
 int windowid = 0;
 int raininit = 1;
-int drop_no = 100;
+int drop_no = 300;
 
 // Get random number
 inline int getnos(int range)
@@ -172,11 +173,11 @@ void FancyBox :: display(void)
 	 * Interface information
 	 */
 	glPushMatrix();
-	glColor4f(color[0], color[1], color[2], 0.5);
+	glColor4f(color[0], color[1], color[2], 0.8);
 	glTranslatef(pos[0], pos[1], pos[2]);
-	glRotatef(angle, 0, 0, 1);
+	glRotatef(angle, 0, 1, 1);
 	glutSolidCube(size);
-	glColor4f(0, 0, 0, 0.5);
+	glColor4f(0, 0, 0, 1);
 	glutWireCube(size);
 	glPopMatrix();
 }
@@ -189,6 +190,8 @@ class Drop
 public:
 	Drop();
 	void display();
+	void merge();
+	void split();
 };
 Drop :: Drop()
 {
@@ -211,6 +214,14 @@ void Drop :: display()
 	glutSolidSphere(radius, 100, 10);
 	glPopMatrix();
 }
+void Drop :: merge()
+{
+
+}
+void Drop :: split()
+{
+
+}
 
 // Stores background texture id
 BackGround *background;
@@ -225,13 +236,14 @@ static void init()
 {
 	glClearColor(0, 0.5, 0.6, 0.5);
 	glMatrixMode(GL_PROJECTION);
-	glOrtho(0, 10, 0, 10, 0, 10);
+	glOrtho(0, 150, 0, 90, 0, 10);
 	glEnable(GL_DEPTH);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
+
 	infotext = new InfoText();
-	box1 = new FancyBox(0, 0, 1, 50, 50, 0, 10, 10);
+	box1 = new FancyBox(0, 0, 1, 50, 50, 0, 30, 10);
 	box2 = new FancyBox(1, 1, 1, 55, 50, 0, 80, 10);
 	background = new BackGround("assets/bg2.bmp");
 }
