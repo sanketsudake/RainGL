@@ -3,7 +3,6 @@
  * Author: Sanket Sudake <sanketsudake at gmail.com>
  * Licence: GNU GPL v3
  */
-
 using namespace std;
 
 #include <cstdio>
@@ -17,15 +16,8 @@ using namespace std;
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-class Drop
-{
-public:
-};
-
 // Load windowid for current window
 int windowid = 0;
-// Stores background texture id
-unsigned int bg = 0;
 int raininit = 1;
 
 // Get random number
@@ -71,35 +63,52 @@ unsigned int loadTexture(const char* filename)
 	return id;
 }
 
-/*
- * Innitialize all parameters for opengl window
- * Enable all required features
- */
-static void init()
+class BackGround
 {
-	glClearColor(0, 0.5, 0.6, 0.5);
-	glMatrixMode(GL_PROJECTION);
-	glOrtho(0, 10, 0, 10, 0, 10);
-	glEnable(GL_DEPTH);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_2D);
-
-	bg =  loadTexture("assets/picture.bmp");
+	int bg;
+public:
+	BackGround(const char *filename);
+	void display();
+};
+BackGround :: BackGround(const char *filename)
+{
+	bg =  loadTexture(filename);
+}
+void BackGround :: display(void)
+{
+	// Bind texture according to ortho parameters
+	glPushMatrix();
+	glColor4f(0, 1, 0, 0.5);
+	glBindTexture(GL_TEXTURE_2D, bg);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(0, 0, 0.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(0, 90, 0.0);
+	glTexCoord2f(1.0,  0.0);
+	glVertex3f(160, 90, 0.0);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(160, 0, 0.0);
+	glEnd();
+	glPopMatrix();
 }
 
-/*
- * Display routine for window
- */
-static void display()
+class InfoText
 {
-	char projname[] = "RainGL";
-	char name[] = "r: rain q:quit";
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	char projname[10];
+	char name[20];
 
-
-
+public:
+	InfoText();
+	void display(int raininit);
+};
+InfoText :: InfoText()
+{
+	strcpy(projname, "RainGL");
+	strcpy(name, "r: rain q:quit");
+}
+void InfoText :: display(int raininit)
+{
 	/* Show project title
 	 * Interface information
 	 */
@@ -125,41 +134,96 @@ static void display()
 		glutBitmapCharacter(GLUT_BITMAP_8_BY_13, name[i]);
 	}
 	glPopMatrix();
+}
 
+class FancyBox
+{
+	GLfloat color[3];
+	GLfloat pos[3];
+	GLfloat angle;
+	GLfloat size;
+	public:
+	FancyBox(
+		GLfloat color1, GLfloat color2, GLfloat color3,
+		GLfloat x, GLfloat y, GLfloat z,
+		GLfloat boxangle, GLfloat boxsize	);
+	void display(void);
+};
+FancyBox :: FancyBox(
+	GLfloat color1, GLfloat color2, GLfloat color3,
+	GLfloat x, GLfloat y, GLfloat z,
+	GLfloat boxangle, GLfloat boxsize
+	)
+{
+	color[0] = color1;
+	color[1] = color2;
+	color[2] = color3;
+	pos[0] = x;
+	pos[1] = y;
+	pos[2] = z;
+	angle = boxangle;
+	size = boxsize;
+}
+void FancyBox :: display(void)
+{
+	/* Show project title
+	 * Interface information
+	 */
 	glPushMatrix();
-	glColor4f(0, 0, 1, 0.5);
-	glTranslatef(50, 50, 0);
-	glRotatef(10, 0, 0, 1);
-	glutSolidCube(10);
+	glColor4f(color[0], color[1], color[2], 0.5);
+	glTranslatef(pos[0], pos[1], pos[2]);
+	glRotatef(angle, 0, 0, 1);
+	glutSolidCube(size);
 	glColor4f(0, 0, 0, 0.5);
-	glutWireCube(10);
+	glutWireCube(size);
 	glPopMatrix();
+}
 
-	glPushMatrix();
-	glColor4f(1, 1, 0, 0.5);
-	glTranslatef(55, 50, 0);
-	glRotatef(80, 0, 0, 1);
-	glutSolidCube(10);
-	glColor4f(0, 0, 0, 0.5);
-	glutWireCube(10);
-	glPopMatrix();
+class Drop
+{
+public:
 
-	// Bind texture according to ortho parameters
-	glPushMatrix();
-	glColor4f(1, 1, 0, 0.5);
-	glBindTexture(GL_TEXTURE_2D, bg);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 1.0);
-	glVertex3f(0, 0, 0.0);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0, 90, 0.0);
-	glTexCoord2f(1.0,  0.0);
-	glVertex3f(160, 90, 0.0);
-	glTexCoord2f(1.0, 1.0);
-	glVertex3f(160, 0, 0.0);
-	glEnd();
-	glPopMatrix();
 
+};
+
+// Stores background texture id
+BackGround *background;
+InfoText *infotext;
+FancyBox *box1, *box2;
+
+/*
+ * Innitialize all parameters for opengl window
+ * Enable all required features
+ */
+static void init()
+{
+	glClearColor(0, 0.5, 0.6, 0.5);
+	glMatrixMode(GL_PROJECTION);
+	glOrtho(0, 10, 0, 10, 0, 10);
+	glEnable(GL_DEPTH);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+	infotext = new InfoText();
+	box1 = new FancyBox(0, 0, 1, 50, 50, 0, 10, 10);
+	box2 = new FancyBox(1, 1, 1, 55, 50, 0, 80, 10);
+	background = new BackGround("assets/picture.bmp");
+}
+
+/*
+ * Display routine for window
+ */
+static void display()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	infotext->display(raininit); // Project title information
+	if(raininit)
+	{
+		box1->display();			// FancyBox in title
+		box2->display();			// FancyBox in title
+	}
+	background->display();		 // Background
 	glutSwapBuffers();
 }
 
@@ -172,7 +236,6 @@ static void reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, 160, 0, 90, 0, 100);
-
 }
 
 static void keyboard(unsigned char key, int x, int y)
@@ -194,7 +257,6 @@ static void keyboard(unsigned char key, int x, int y)
 		break;
 	case 'r':
 	case 'R':
-
 		raininit = 0;
 		break;
 	}
