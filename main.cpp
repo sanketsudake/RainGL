@@ -15,10 +15,13 @@ using namespace std;
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-
+#define MAXX 160
+#define MAXY 90
+#define DROP_RADIUS 6
 // Load windowid for current window
 int windowid = 0;
 int raininit = 1;
+int drop_no = 100;
 
 // Get random number
 inline int getnos(int range)
@@ -84,11 +87,11 @@ void BackGround :: display(void)
 	glTexCoord2f(0.0, 1.0);
 	glVertex3f(0, 0, 0.0);
 	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0, 90, 0.0);
+	glVertex3f(0, MAXY, 0.0);
 	glTexCoord2f(1.0,  0.0);
-	glVertex3f(160, 90, 0.0);
+	glVertex3f(MAXX, MAXY, 0.0);
 	glTexCoord2f(1.0, 1.0);
-	glVertex3f(160, 0, 0.0);
+	glVertex3f(MAXX, 0, 0.0);
 	glEnd();
 	glPopMatrix();
 }
@@ -97,7 +100,6 @@ class InfoText
 {
 	char projname[10];
 	char name[20];
-
 public:
 	InfoText();
 	void display(int raininit);
@@ -105,7 +107,7 @@ public:
 InfoText :: InfoText()
 {
 	strcpy(projname, "RainGL");
-	strcpy(name, "r: rain q:quit");
+	strcpy(name, "R: Rain Q: Quit");
 }
 void InfoText :: display(int raininit)
 {
@@ -113,8 +115,8 @@ void InfoText :: display(int raininit)
 	 * Interface information
 	 */
 	glPushMatrix();
-	glColor4f(0, 0, 0, 0.5);
-	for(int i = 0; i < 14; i++)
+	glColor4f(1, 1, 1, 1);
+	for(int i = 0; i < 15; i++)
 	{
 		if(i < 7)
 		{
@@ -181,16 +183,40 @@ void FancyBox :: display(void)
 
 class Drop
 {
+	GLfloat trans[3];
+	GLfloat color[3];
+	GLfloat radius;
 public:
-
-
+	Drop();
+	void display();
 };
+Drop :: Drop()
+{
+	trans[0] = getnosf(MAXX);
+	trans[1] = getnosf(MAXY);
+	trans[2] = 0;
+	color[0] = getcolf();
+	color[1] = getcolf();
+	color[2] = getcolf();
+	// color[0] = 0;
+	// color[1] = 0;
+	// color[2] = 0;
+	radius = getnosf(DROP_RADIUS);
+}
+void Drop :: display()
+{
+	glPushMatrix();
+	glTranslatef(trans[0], trans[1], trans[2]);
+	glColor4f(color[0], color[1], color[2], 1);
+	glutSolidSphere(radius, 100, 10);
+	glPopMatrix();
+}
 
 // Stores background texture id
 BackGround *background;
 InfoText *infotext;
 FancyBox *box1, *box2;
-
+Drop *drops[100];
 /*
  * Innitialize all parameters for opengl window
  * Enable all required features
@@ -207,7 +233,7 @@ static void init()
 	infotext = new InfoText();
 	box1 = new FancyBox(0, 0, 1, 50, 50, 0, 10, 10);
 	box2 = new FancyBox(1, 1, 1, 55, 50, 0, 80, 10);
-	background = new BackGround("assets/picture.bmp");
+	background = new BackGround("assets/bg2.bmp");
 }
 
 /*
@@ -223,6 +249,11 @@ static void display()
 		box1->display();			// FancyBox in title
 		box2->display();			// FancyBox in title
 	}
+	for (int i = 0; i < drop_no; ++i)
+	{
+		drops[i] = new Drop();
+		drops[i]->display();
+	}
 	background->display();		 // Background
 	glutSwapBuffers();
 }
@@ -235,7 +266,7 @@ static void reshape(int w, int h)
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 160, 0, 90, 0, 100);
+	glOrtho(0, MAXX, 0, MAXY, 0, 100);
 }
 
 static void keyboard(unsigned char key, int x, int y)
