@@ -18,11 +18,12 @@ using namespace std;
 #define MAXX 160
 #define MAXY 90
 #define DROP_RADIUS 4
+#define SPEED 0.01
 
-// Load windowid for current window
+// Load windowid pfor current window
 int windowid = 0;
 int raininit = 1;
-int drop_no = 300;
+int drop_no = 100;
 
 // Get random number
 inline int getnos(int range)
@@ -145,7 +146,7 @@ class FancyBox
 	GLfloat pos[3];
 	GLfloat angle;
 	GLfloat size;
-	public:
+public:
 	FancyBox(
 		GLfloat color1, GLfloat color2, GLfloat color3,
 		GLfloat x, GLfloat y, GLfloat z,
@@ -187,6 +188,12 @@ class Drop
 	GLfloat trans[3];
 	GLfloat color[3];
 	GLfloat radius;
+	int state;
+	/*
+	  1 - active
+	  2 - merged
+	  3 - dead
+	*/
 public:
 	Drop();
 	void display();
@@ -195,6 +202,7 @@ public:
 };
 Drop :: Drop()
 {
+	state = 1;
 	trans[0] = getnosf(MAXX);
 	trans[1] = getnosf(MAXY);
 	trans[2] = 0;
@@ -206,13 +214,30 @@ Drop :: Drop()
 	// color[2] = 0;
 	radius = getnosf(DROP_RADIUS);
 }
+
 void Drop :: display()
 {
-	glPushMatrix();
-	glTranslatef(trans[0], trans[1], trans[2]);
-	glColor4f(color[0], color[1], color[2], 1);
-	glutSolidSphere(radius, 100, 10);
-	glPopMatrix();
+	if(state != 1)
+	{
+		merge();
+	}
+	if(state == 1)
+	{
+		glPushMatrix();
+		glTranslatef(trans[0], trans[1], trans[2]);
+		glColor4f(color[0], color[1], color[2], 1);
+		glutSolidSphere(radius, 100, 10);
+		//glutWireSphere(radius, 100, 10);
+		trans[0] = trans[0] + SPEED;
+		trans[1] = trans[1] + SPEED;
+		if(0 < (int)trans[0] or (int)trans[0] >= MAXX or
+		   0 < (int)trans[1] or(int)trans[1] >= MAXY)
+		{
+			trans[0] = getnos(MAXX);
+			trans[1] = getnos(MAXY);
+		}
+		glPopMatrix();
+	}
 }
 void Drop :: merge()
 {
@@ -227,7 +252,7 @@ void Drop :: split()
 BackGround *background;
 InfoText *infotext;
 FancyBox *box1, *box2;
-Drop *drops[100];
+Drop *drops[300];
 /*
  * Innitialize all parameters for opengl window
  * Enable all required features
@@ -241,11 +266,14 @@ static void init()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
-
 	infotext = new InfoText();
 	box1 = new FancyBox(0, 0, 1, 50, 50, 0, 30, 10);
 	box2 = new FancyBox(1, 1, 1, 55, 50, 0, 80, 10);
 	background = new BackGround("assets/bg2.bmp");
+	for (int i = 0; i < drop_no; ++i)
+	{
+		drops[i] = new Drop();
+	}
 }
 
 /*
@@ -263,7 +291,6 @@ static void display()
 	}
 	for (int i = 0; i < drop_no; ++i)
 	{
-		drops[i] = new Drop();
 		drops[i]->display();
 	}
 	background->display();		 // Background
@@ -305,7 +332,10 @@ static void keyboard(unsigned char key, int x, int y)
 	}
 	glutPostRedisplay();
 }
-
+static void idlefunc()
+{
+	glutPostRedisplay();
+}
 int main(int argc, char *argv[])
 {
 	glutInit(&argc, argv);
@@ -319,6 +349,7 @@ int main(int argc, char *argv[])
 	glutKeyboardFunc(keyboard);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutIdleFunc(idlefunc);
 	glutMainLoop();
 	return 0;
 }
