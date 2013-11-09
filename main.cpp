@@ -43,6 +43,12 @@ inline float getcolf()
 	return (rand() % 11 * 0.1);
 }
 
+// Check collision between two spheres
+inline int check_collision(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLfloat r1, GLfloat r2)
+{
+	return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) > ((r1 + r2) * (r1 + r2));
+}
+
 /*
  * Load texture image with specified name
  * prints error and exists program if specified image
@@ -185,6 +191,7 @@ void FancyBox :: display(void)
 
 class Drop
 {
+public:
 	GLfloat trans[3];
 	GLfloat color[3];
 	GLfloat radius;
@@ -194,7 +201,6 @@ class Drop
 	  2 - merged
 	  3 - dead
 	*/
-public:
 	Drop();
 	void display();
 	void merge();
@@ -217,10 +223,6 @@ Drop :: Drop()
 
 void Drop :: display()
 {
-	if(state != 1)
-	{
-		merge();
-	}
 	if(state == 1)
 	{
 		glPushMatrix();
@@ -241,11 +243,21 @@ void Drop :: display()
 }
 void Drop :: merge()
 {
-
+	state = 2;
 }
 void Drop :: split()
 {
-
+	state = 1;
+	trans[0] = getnosf(MAXX);
+	trans[1] = getnosf(MAXY);
+	trans[2] = 0;
+	color[0] = getcolf();
+	color[1] = getcolf();
+	color[2] = getcolf();
+	// color[0] = 0;
+	// color[1] = 0;
+	// color[2] = 0;
+	radius = getnosf(DROP_RADIUS);
 }
 
 // Stores background texture id
