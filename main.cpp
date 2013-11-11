@@ -17,14 +17,19 @@ using namespace std;
 #include <GL/glut.h>
 #define MAXX 160
 #define MAXY 90
-#define DROP_RADIUS 4
-#define SPEED 1.5
-#define START_XPOS 160
-#define START_YPOS 60
+#define DROP_RADIUS 3
+//#define CUDA
+#ifdef CUDA
+#define SPEED 0.3
+#else
+#define SPEED 3
+#endif
+#define START_XPOS 140
+#define START_YPOS 70
 // Load windowid pfor current window
 int windowid = 0;
 int raininit = 1;
-int drop_no = 100;
+int drop_no = 300;
 
 // Get random number
 inline int getnos(int range)
@@ -125,6 +130,7 @@ void InfoText :: display(int raininit)
 	 */
 	glPushMatrix();
 	glColor4f(1, 1, 1, 1);
+
 	for(int i = 0; i < 15; i++)
 	{
 		if(i < 7)
@@ -181,6 +187,7 @@ void FancyBox :: display(void)
 	 * Interface information
 	 */
 	glPushMatrix();
+	glDisable(GL_FOG);
 	glColor4f(color[0], color[1], color[2], 0.8);
 	glTranslatef(pos[0], pos[1], pos[2]);
 	glRotatef(angle, 0, 1, 1);
@@ -188,6 +195,7 @@ void FancyBox :: display(void)
 	glColor4f(0, 0, 0, 1);
 	glutWireCube(size);
 	glPopMatrix();
+	glEnable(GL_FOG);
 }
 
 class Drop
@@ -233,10 +241,13 @@ void Drop :: display()
 		//glutWireSphere(radius, 100, 10);
 		trans[0] = trans[0] + SPEED;
 		trans[1] = trans[1] + SPEED;
-		if( (int)trans[0] < 0 or (int)trans[0] >= MAXX )
+		if(( (int)trans[0] < 0 || (int)trans[0] >= MAXX ) && ( (int)trans[1] < 0 || (int)trans[1] >= MAXY))
+		{
 			trans[0] = getnos(START_XPOS);
-		if( (int)trans[1] < 0 or (int)trans[1] >= MAXY)
 			trans[1] = getnos(START_YPOS);
+		}
+
+
 		glPopMatrix();
 	}
 }
@@ -289,7 +300,7 @@ static void display()
 	glEnable(GL_FOG);
 	GLfloat fogColor[4] = {1, 1, 1, 0.5};
 	GLfloat density = 1;
-	int fogMode = GL_LINEAR;
+	int fogMode = GL_EXP;
 	glFogi (GL_FOG_MODE, fogMode);
 	glFogfv (GL_FOG_COLOR, fogColor);
 	glFogf (GL_FOG_DENSITY, density);
