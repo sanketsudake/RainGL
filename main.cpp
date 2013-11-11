@@ -18,8 +18,9 @@ using namespace std;
 #define MAXX 160
 #define MAXY 90
 #define DROP_RADIUS 4
-#define SPEED 0.00
-
+#define SPEED 1.5
+#define START_XPOS 160
+#define START_YPOS 60
 // Load windowid pfor current window
 int windowid = 0;
 int raininit = 1;
@@ -232,10 +233,10 @@ void Drop :: display()
 		//glutWireSphere(radius, 100, 10);
 		trans[0] = trans[0] + SPEED;
 		trans[1] = trans[1] + SPEED;
-		if(0 < (int)trans[0] or (int)trans[0] >= MAXX )
-			trans[0] = getnos(MAXX);
-		if(0 < (int)trans[1] or (int)trans[1] >= MAXY)
-			trans[1] = getnos(MAXY);
+		if( (int)trans[0] < 0 or (int)trans[0] >= MAXX )
+			trans[0] = getnos(START_XPOS);
+		if( (int)trans[1] < 0 or (int)trans[1] >= MAXY)
+			trans[1] = getnos(START_YPOS);
 		glPopMatrix();
 	}
 }
