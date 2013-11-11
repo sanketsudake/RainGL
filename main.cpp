@@ -18,7 +18,7 @@ using namespace std;
 #define MAXX 160
 #define MAXY 90
 #define DROP_RADIUS 4
-#define SPEED 0.01
+#define SPEED 0.00
 
 // Load windowid pfor current window
 int windowid = 0;
@@ -232,12 +232,10 @@ void Drop :: display()
 		//glutWireSphere(radius, 100, 10);
 		trans[0] = trans[0] + SPEED;
 		trans[1] = trans[1] + SPEED;
-		if(0 < (int)trans[0] or (int)trans[0] >= MAXX or
-		   0 < (int)trans[1] or(int)trans[1] >= MAXY)
-		{
+		if(0 < (int)trans[0] or (int)trans[0] >= MAXX )
 			trans[0] = getnos(MAXX);
+		if(0 < (int)trans[1] or (int)trans[1] >= MAXY)
 			trans[1] = getnos(MAXY);
-		}
 		glPopMatrix();
 	}
 }
@@ -251,13 +249,6 @@ void Drop :: split()
 	trans[0] = getnosf(MAXX);
 	trans[1] = getnosf(MAXY);
 	trans[2] = 0;
-	color[0] = getcolf();
-	color[1] = getcolf();
-	color[2] = getcolf();
-	// color[0] = 0;
-	// color[1] = 0;
-	// color[2] = 0;
-	radius = getnosf(DROP_RADIUS);
 }
 
 // Stores background texture id
@@ -294,6 +285,16 @@ static void init()
 static void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_FOG);
+	GLfloat fogColor[4] = {1, 1, 1, 0.5};
+	GLfloat density = 1;
+	int fogMode = GL_LINEAR;
+	glFogi (GL_FOG_MODE, fogMode);
+	glFogfv (GL_FOG_COLOR, fogColor);
+	glFogf (GL_FOG_DENSITY, density);
+	glHint (GL_FOG_HINT, GL_DONT_CARE);
+	glFogf (GL_FOG_START, 0.0);
+	glFogf (GL_FOG_END, 9.0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	infotext->display(raininit); // Project title information
 	if(raininit)
