@@ -240,11 +240,13 @@ void Drop :: display()
 		glutSolidSphere(radius, 100, 10);
 		//glutWireSphere(radius, 100, 10);
 		trans[0] = trans[0] + SPEED;
-		trans[1] = trans[1] + SPEED;
+		trans[1] = trans[1] - SPEED;
 		if(( (int)trans[0] < 0 || (int)trans[0] >= MAXX ) && ( (int)trans[1] < 0 || (int)trans[1] >= MAXY))
 		{
-			trans[0] = getnos(START_XPOS);
-			trans[1] = getnos(START_YPOS);
+			trans[0] = getnosf(MAXX);
+			trans[1] = getnosf(MAXY);
+			//trans[0] = getnos(START_XPOS);
+			//trans[1] = getnos(START_YPOS);
 		}
 
 
@@ -300,7 +302,7 @@ static void display()
 	glEnable(GL_FOG);
 	GLfloat fogColor[4] = {1, 1, 1, 0.5};
 	GLfloat density = 1;
-	int fogMode = GL_EXP;
+	int fogMode = GL_EXP2;
 	glFogi (GL_FOG_MODE, fogMode);
 	glFogfv (GL_FOG_COLOR, fogColor);
 	glFogf (GL_FOG_DENSITY, density);
