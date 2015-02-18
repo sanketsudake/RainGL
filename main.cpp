@@ -24,12 +24,15 @@ using namespace std;
 #else
 #define SPEED 3
 #endif
-#define START_XPOS 140
+#define START_XPOS 100
 #define START_YPOS 70
+
+
 // Load windowid pfor current window
 int windowid = 0;
 int raininit = 1;
 int drop_no = 300;
+
 
 // Get random number
 inline int getnos(int range)
@@ -37,11 +40,13 @@ inline int getnos(int range)
 	return ( rand() % range );
 }
 
+
 // Get random floating number
 inline float getnosf(int range)
 {
 	return (rand() % range + (rand() % 10 * 0.1));
 }
+
 
 // Get random value for color
 inline float getcolf()
@@ -49,11 +54,13 @@ inline float getcolf()
 	return (rand() % 11 * 0.1);
 }
 
+
 // Check collision between two spheres
 inline int check_collision(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLfloat r1, GLfloat r2)
 {
 	return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) > ((r1 + r2) * (r1 + r2));
 }
+
 
 /*
  * Load texture image with specified name
@@ -80,6 +87,7 @@ unsigned int loadTexture(const char* filename)
 	return id;
 }
 
+
 class BackGround
 {
 	int bg;
@@ -87,10 +95,14 @@ public:
 	BackGround(const char *filename);
 	void display();
 };
+
+
 BackGround :: BackGround(const char *filename)
 {
 	bg =  loadTexture(filename);
 }
+
+
 void BackGround :: display(void)
 {
 	// Bind texture according to ortho parameters
@@ -110,6 +122,8 @@ void BackGround :: display(void)
 	glPopMatrix();
 }
 
+
+
 class InfoText
 {
 	char projname[10];
@@ -118,11 +132,15 @@ public:
 	InfoText();
 	void display(int raininit);
 };
+
+
 InfoText :: InfoText()
 {
 	strcpy(projname, "RainGL");
 	strcpy(name, "R: Rain Q: Quit");
 }
+
+
 void InfoText :: display(int raininit)
 {
 	/* Show project title
@@ -153,6 +171,7 @@ void InfoText :: display(int raininit)
 	glPopMatrix();
 }
 
+
 class FancyBox
 {
 	GLfloat color[3];
@@ -166,6 +185,8 @@ public:
 		GLfloat boxangle, GLfloat boxsize	);
 	void display(void);
 };
+
+
 FancyBox :: FancyBox(
 	GLfloat color1, GLfloat color2, GLfloat color3,
 	GLfloat x, GLfloat y, GLfloat z,
@@ -181,6 +202,8 @@ FancyBox :: FancyBox(
 	angle = boxangle;
 	size = boxsize;
 }
+
+
 void FancyBox :: display(void)
 {
 	/* Show project title
@@ -197,6 +220,7 @@ void FancyBox :: display(void)
 	glPopMatrix();
 	glEnable(GL_FOG);
 }
+
 
 class Drop
 {
@@ -215,6 +239,8 @@ public:
 	void merge();
 	void split();
 };
+
+
 Drop :: Drop()
 {
 	state = 1;
@@ -229,6 +255,7 @@ Drop :: Drop()
 	// color[2] = 0;
 	radius = getnosf(DROP_RADIUS);
 }
+
 
 void Drop :: display()
 {
@@ -253,10 +280,14 @@ void Drop :: display()
 		glPopMatrix();
 	}
 }
+
+
 void Drop :: merge()
 {
 	state = 2;
 }
+
+
 void Drop :: split()
 {
 	state = 1;
@@ -265,11 +296,14 @@ void Drop :: split()
 	trans[2] = 0;
 }
 
+
 // Stores background texture id
 BackGround *background;
 InfoText *infotext;
 FancyBox *box1, *box2;
 Drop *drops[300];
+
+
 /*
  * Innitialize all parameters for opengl window
  * Enable all required features
@@ -292,6 +326,7 @@ static void init()
 		drops[i] = new Drop();
 	}
 }
+
 
 /*
  * Display routine for window
@@ -324,6 +359,7 @@ static void display()
 	glutSwapBuffers();
 }
 
+
 /*
  * Reshapes window when maximized
  */
@@ -334,6 +370,7 @@ static void reshape(int w, int h)
 	glLoadIdentity();
 	glOrtho(0, MAXX, 0, MAXY, 0, 100);
 }
+
 
 static void keyboard(unsigned char key, int x, int y)
 {
@@ -359,10 +396,14 @@ static void keyboard(unsigned char key, int x, int y)
 	}
 	glutPostRedisplay();
 }
+
+
 static void idlefunc()
 {
 	glutPostRedisplay();
 }
+
+
 int main(int argc, char *argv[])
 {
 	glutInit(&argc, argv);
